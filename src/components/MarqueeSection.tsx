@@ -1,17 +1,26 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
+import {
+  Ga4DashboardCard,
+  ContentPerformanceCard,
+  GscBiodataCard,
+  InstagramCombinedMilestonesCard,
+  InstagramMilestone70KCard,
+  InstagramMilestone53KCard,
+  InstagramMilestone23KCard,
+  InstagramMilestone8KCard,
+} from './marquee/RealWorkCards';
 
-const ROW1_IMAGES = [
-  'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
-  'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
-  'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif',
-  'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif',
-  'https://motionsites.ai/assets/hero-asme-preview-B_nGDnTP.gif',
-  'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
-  'https://motionsites.ai/assets/hero-vitara-preview-Cjz2QYyU.gif',
-  'https://motionsites.ai/assets/hero-terra-preview-BFjrCr7T.gif',
-  'https://motionsites.ai/assets/hero-skyelite-preview-DHaZIgUv.gif',
-  'https://motionsites.ai/assets/hero-aethera-preview-DknSlcTa.gif',
-  'https://motionsites.ai/assets/hero-designpro-preview-D8c5_een.gif',
+// 8 Interleaved authentic work cards for maximum visual variety
+const ROW1_ITEMS = [
+  { id: 'gsc-1', component: <GscBiodataCard /> },
+  { id: 'ig-70k', component: <InstagramMilestone70KCard /> },
+  { id: 'ga4-1', component: <Ga4DashboardCard /> },
+  { id: 'ig-combined', component: <InstagramCombinedMilestonesCard /> },
+  { id: 'content-perf', component: <ContentPerformanceCard /> },
+  { id: 'ig-53k', component: <InstagramMilestone53KCard /> },
+  { id: 'ig-23k', component: <InstagramMilestone23KCard /> },
+  { id: 'ig-8k', component: <InstagramMilestone8KCard /> },
 ];
 
 const ROW2_IMAGES = [
@@ -27,14 +36,41 @@ const ROW2_IMAGES = [
   'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif',
 ];
 
-// Tripled lists for seamless scrolling
-const TRIPLED_ROW1 = [...ROW1_IMAGES, ...ROW1_IMAGES, ...ROW1_IMAGES];
-const TRIPLED_ROW2 = [...ROW2_IMAGES, ...ROW2_IMAGES, ...ROW2_IMAGES];
+// Quadrupled lists for unbroken continuous scrolling
+const QUAD_ROW1 = [...ROW1_ITEMS, ...ROW1_ITEMS, ...ROW1_ITEMS, ...ROW1_ITEMS];
+const QUAD_ROW2 = [...ROW2_IMAGES, ...ROW2_IMAGES, ...ROW2_IMAGES, ...ROW2_IMAGES];
 
 export const MarqueeSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [offset, setOffset] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [manualOffset, setManualOffset] = useState(0);
+  const [scrollSpeed, setScrollSpeed] = useState(0);
+  const autoOffsetRef = useRef(0);
+  const animFrameRef = useRef<number>(0);
+  const [displayOffset, setDisplayOffset] = useState(0);
 
+  // Smooth continuous auto-scrolling loop
+  useEffect(() => {
+    let lastTime = performance.now();
+
+    const tick = (now: number) => {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      if (!isPaused) {
+        // Continuous smooth auto-advance ~50px/sec
+        autoOffsetRef.current += 50 * dt;
+      }
+
+      setDisplayOffset(autoOffsetRef.current);
+      animFrameRef.current = requestAnimationFrame(tick);
+    };
+
+    animFrameRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [isPaused]);
+
+  // Accelerates on scroll so user can scrub through all cards quickly
   useEffect(() => {
     let ticking = false;
 
@@ -44,8 +80,8 @@ export const MarqueeSection: React.FC = () => {
           if (sectionRef.current) {
             const rect = sectionRef.current.getBoundingClientRect();
             const sectionTop = rect.top + window.scrollY;
-            const scrollOffset = (window.scrollY - sectionTop + window.innerHeight) * 0.3;
-            setOffset(scrollOffset);
+            const scrollDistance = (window.scrollY - sectionTop + window.innerHeight) * 0.9;
+            setScrollSpeed(scrollDistance);
           }
           ticking = false;
         });
@@ -55,65 +91,102 @@ export const MarqueeSection: React.FC = () => {
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Row 1 moves right: translateX(offset - 200)
-  // We offset by -1200px initially so content fills left and right smoothly
-  const row1Transform = `translateX(${offset - 200 - 1500}px)`;
-  // Row 2 moves left: translateX(-(offset - 200))
-  const row2Transform = `translateX(${-(offset - 200) - 500}px)`;
+  // Total width of one single cycle (8 cards * ~396px = 3168px)
+  const singleCycleWidth = ROW1_ITEMS.length * 396;
+  const currentX1 = ((displayOffset + scrollSpeed + manualOffset) % singleCycleWidth + singleCycleWidth) % singleCycleWidth;
+  const row1Transform = `translate3d(-${currentX1}px, 0, 0)`;
+
+  const singleCycleWidth2 = ROW2_IMAGES.length * 396;
+  const currentX2 = ((displayOffset * 0.85 - scrollSpeed - manualOffset) % singleCycleWidth2 + singleCycleWidth2) % singleCycleWidth2;
+  const row2Transform = `translate3d(-${singleCycleWidth2 - currentX2}px, 0, 0)`;
+
+  const handleShift = (amount: number) => {
+    setManualOffset((prev) => prev + amount);
+  };
 
   return (
     <section
       ref={sectionRef}
       id="marquee"
-      className="bg-[#0C0C0C] dark:bg-[#0C0C0C] light:bg-[#EFEFEF] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden relative transition-colors duration-500"
+      className="bg-[#0C0C0C] dark:bg-[#0C0C0C] light:bg-[#EFEFEF] pt-24 sm:pt-32 md:pt-40 pb-12 overflow-hidden relative transition-colors duration-500"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="flex flex-col gap-3">
-        {/* Row 1 - moves right */}
+      {/* Top subtle controls & badge */}
+      <div className="max-w-6xl mx-auto px-6 mb-4 flex items-center justify-between text-xs text-[#D7E2EA]/60">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-semibold uppercase tracking-wider text-white">
+            Row 1: Verified Telemetry & Instagram Growth (8 Live Case Studies)
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleShift(-400)}
+            title="Previous Cards"
+            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setIsPaused(!isPaused)}
+            title={isPaused ? 'Resume Auto-Scroll' : 'Pause Auto-Scroll'}
+            className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center gap-1 transition-all cursor-pointer"
+          >
+            {isPaused ? <Play className="w-3 h-3 fill-current" /> : <Pause className="w-3 h-3 fill-current" />}
+            <span className="text-[10px] font-bold uppercase">{isPaused ? 'Play' : 'Pause'}</span>
+          </button>
+          <button
+            onClick={() => handleShift(400)}
+            title="Next Cards"
+            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {/* Row 1 - moves smoothly across all 8 verified work items */}
         <div
-          className="flex gap-3"
+          className="flex gap-4"
           style={{
             transform: row1Transform,
             willChange: 'transform',
+            transition: 'transform 0.05s linear',
           }}
         >
-          {TRIPLED_ROW1.map((src, index) => (
+          {QUAD_ROW1.map((item, index) => (
             <div
               key={`row1-${index}`}
-              className="w-[420px] h-[270px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-[#222]/40 shadow-lg"
+              className="w-[380px] h-[260px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
             >
-              <img
-                src={src}
-                alt={`3D Work Preview ${index + 1}`}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-2xl transition-transform duration-500 hover:scale-105"
-              />
+              {item.component}
             </div>
           ))}
         </div>
 
-        {/* Row 2 - moves left */}
+        {/* Row 2 - moves in opposite direction */}
         <div
-          className="flex gap-3"
+          className="flex gap-4"
           style={{
             transform: row2Transform,
             willChange: 'transform',
+            transition: 'transform 0.05s linear',
           }}
         >
-          {TRIPLED_ROW2.map((src, index) => (
+          {QUAD_ROW2.map((src, index) => (
             <div
               key={`row2-${index}`}
-              className="w-[420px] h-[270px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-[#222]/40 shadow-lg"
+              className="w-[380px] h-[260px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-[#222]/40 shadow-xl"
             >
               <img
                 src={src}
-                alt={`3D Work Preview ${index + 1}`}
+                alt={`Product Preview ${index + 1}`}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover rounded-2xl transition-transform duration-500 hover:scale-105"

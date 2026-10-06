@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
 import FadeIn from './common/FadeIn';
 import LiveProjectButton from './common/LiveProjectButton';
 import {
@@ -79,6 +79,27 @@ export const PROJECTS: ProjectData[] = [
   },
 ];
 
+// Framer motion variants for smooth staggered entrance
+const cardEntranceVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 75,
+    scale: 0.95,
+    filter: 'blur(4px)',
+  },
+  visible: (customIndex: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.85,
+      delay: customIndex * 0.16,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  }),
+};
+
 interface CardProps {
   project: ProjectData;
   index: number;
@@ -106,108 +127,131 @@ const ProjectCard: React.FC<CardProps> = ({ project, index, totalCards, onSelect
         top: `calc(5rem + ${index * 28}px)`,
       }}
     >
+      {/* Staggered Entrance Motion Container */}
       <motion.div
-        style={{ scale }}
-        className="w-full max-w-6xl rounded-[40px] sm:rounded-[50px] md:rounded-[60px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:p-6 md:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.85)] relative"
+        custom={index}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.12, margin: '0px 0px -40px 0px' }}
+        variants={cardEntranceVariants}
+        className="w-full max-w-6xl"
       >
-        {/* Top Row: Number, category label, project name, and Live Project button */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 sm:pb-8 border-b border-[#D7E2EA]/20">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <span
-              className="font-black text-[#D7E2EA] leading-none select-none tracking-tight"
-              style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
-            >
-              {project.number}
-            </span>
-
-            <div className="flex flex-col">
-              <span className="text-xs uppercase tracking-widest text-[#D7E2EA]/50 font-normal">
-                {project.category}
-              </span>
-              <h3
-                className="font-medium uppercase text-[#D7E2EA] tracking-wide"
-                style={{ fontSize: 'clamp(1.1rem, 2vw, 1.8rem)' }}
+        {/* Sticky Deck Scaling Container */}
+        <motion.div
+          style={{ scale }}
+          className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:p-6 md:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.85)] relative"
+        >
+          {/* Top Row: Number, category label, project name, and Live Project button */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: index * 0.16 + 0.08, ease: [0.16, 1, 0.3, 1] as const }}
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 sm:pb-8 border-b border-[#D7E2EA]/20"
+          >
+            <div className="flex items-center gap-4 sm:gap-6">
+              <span
+                className="font-black text-[#D7E2EA] leading-none select-none tracking-tight"
+                style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
               >
-                {project.name}
-              </h3>
-            </div>
-          </div>
+                {project.number}
+              </span>
 
-          <div className="self-end sm:self-center">
-            <LiveProjectButton onClick={() => onSelectProject(project)} />
-          </div>
-        </div>
-
-        {/* Bottom Row: Two-column image grid (Left: 40% with 2 stacked images, Right: 60% with 1 tall image) */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 pt-6 sm:pt-8">
-          {/* Left Column (40% width -> 5 cols out of 12) */}
-          <div className="md:col-span-5 flex flex-col gap-4 sm:gap-6">
-            {/* Left Top Image / GA4 Dashboard */}
-            <div
-              className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-lg"
-              style={{ height: 'clamp(140px, 17vw, 240px)' }}
-            >
-              {project.id === 'instaresume-platform' ? (
-                <Ga4ActiveUsersCard />
-              ) : (
-                <>
-                  <img
-                    src={project.col1Image1}
-                    alt={`${project.name} preview 1`}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                </>
-              )}
+              <div className="flex flex-col">
+                <span className="text-xs uppercase tracking-widest text-[#D7E2EA]/50 font-normal">
+                  {project.category}
+                </span>
+                <h3
+                  className="font-medium uppercase text-[#D7E2EA] tracking-wide"
+                  style={{ fontSize: 'clamp(1.1rem, 2vw, 1.8rem)' }}
+                >
+                  {project.name}
+                </h3>
+              </div>
             </div>
 
-            {/* Left Bottom Image / GSC Countries Breakdown */}
-            <div
-              className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-lg"
-              style={{ height: 'clamp(170px, 23vw, 350px)' }}
-            >
-              {project.id === 'instaresume-platform' ? (
-                <GscCountriesCard />
-              ) : (
-                <>
-                  <img
-                    src={project.col1Image2}
-                    alt={`${project.name} preview 2`}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                </>
-              )}
+            <div className="self-end sm:self-center">
+              <LiveProjectButton onClick={() => onSelectProject(project)} />
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column (60% width -> 7 cols out of 12) - GSC Search Results Performance */}
-          <div className="md:col-span-7">
-            <div
-              className="w-full h-full min-h-[320px] sm:min-h-[420px] md:min-h-[auto] rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-xl"
-              style={{ height: '100%' }}
-            >
-              {project.id === 'instaresume-platform' ? (
-                <GscSearchPerformanceCard />
-              ) : (
-                <>
-                  <img
-                    src={project.col2Image}
-                    alt={`${project.name} featured visual`}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                </>
-              )}
+          {/* Bottom Row: Two-column image grid (Left: 40% with 2 stacked images, Right: 60% with 1 tall image) */}
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: index * 0.16 + 0.15, ease: [0.16, 1, 0.3, 1] as const }}
+            className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 pt-6 sm:pt-8"
+          >
+            {/* Left Column (40% width -> 5 cols out of 12) */}
+            <div className="md:col-span-5 flex flex-col gap-4 sm:gap-6">
+              {/* Left Top Image / GA4 Dashboard */}
+              <div
+                className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-lg"
+                style={{ height: 'clamp(140px, 17vw, 240px)' }}
+              >
+                {project.id === 'instaresume-platform' ? (
+                  <Ga4ActiveUsersCard />
+                ) : (
+                  <>
+                    <img
+                      src={project.col1Image1}
+                      alt={`${project.name} preview 1`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                  </>
+                )}
+              </div>
+
+              {/* Left Bottom Image / GSC Countries Breakdown */}
+              <div
+                className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-lg"
+                style={{ height: 'clamp(170px, 23vw, 350px)' }}
+              >
+                {project.id === 'instaresume-platform' ? (
+                  <GscCountriesCard />
+                ) : (
+                  <>
+                    <img
+                      src={project.col1Image2}
+                      alt={`${project.name} preview 2`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
+
+            {/* Right Column (60% width -> 7 cols out of 12) - GSC Search Results Performance */}
+            <div className="md:col-span-7">
+              <div
+                className="w-full h-full min-h-[320px] sm:min-h-[420px] md:min-h-[auto] rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-xl"
+                style={{ height: '100%' }}
+              >
+                {project.id === 'instaresume-platform' ? (
+                  <GscSearchPerformanceCard />
+                ) : (
+                  <>
+                    <img
+                      src={project.col2Image}
+                      alt={`${project.name} featured visual`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
       </motion.div>
     </div>
   );
