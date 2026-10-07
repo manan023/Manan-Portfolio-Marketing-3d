@@ -107,7 +107,7 @@ export const AiStudioPage: React.FC<AiStudioPageProps> = ({
   const [videoRatio, setVideoRatio] = useState<'16:9' | '9:16'>('9:16');
   const [videoMode, setVideoMode] = useState<'text' | 'image'>('text');
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string>(
-    'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif'
+    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85'
   );
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
@@ -233,9 +233,9 @@ export const AiStudioPage: React.FC<AiStudioPageProps> = ({
     setIsGeneratingVideo(true);
     setTimeout(() => {
       const sampleVideos = [
-        'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
-        'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif',
-        'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
+        'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85',
+        'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
+        'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea.png&w=1280&q=85',
       ];
       setGeneratedVideoUrl(sampleVideos[Math.floor(Math.random() * sampleVideos.length)]);
       setIsGeneratingVideo(false);

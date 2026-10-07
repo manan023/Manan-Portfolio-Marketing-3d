@@ -59,9 +59,12 @@ export const Footer: React.FC<FooterProps> = ({
           >
             Highlights
           </button>
+          {/* Price option commented out per request */}
+          {/*
           <button onClick={onOpenPricing} className="hover:text-white transition-colors cursor-pointer">
             Price
           </button>
+          */}
           <button
             onClick={() => {
               const el = document.getElementById('projects');

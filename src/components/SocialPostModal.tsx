@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Instagram, Linkedin, Twitter, ExternalLink, Heart, Share2, Eye, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { SocialPost } from './SocialHighlightsSection';
+import { SocialPostMediaVisual } from './social/SocialPostMediaVisual';
 
 interface SocialPostModalProps {
   post: SocialPost | null;
@@ -60,12 +61,8 @@ export const SocialPostModal: React.FC<SocialPostModalProps> = ({ post, onClose,
             {/* Visual Media & Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
               <div className="md:col-span-5 rounded-2xl overflow-hidden bg-black aspect-[4/3] md:aspect-[3/4] border border-white/10 relative">
-                <img
-                  src={post.mediaUrl}
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-3 left-3 right-3 bg-black/80 backdrop-blur-md p-2.5 rounded-xl border border-white/15 flex items-center justify-around text-xs text-white">
+                <SocialPostMediaVisual post={post} />
+                <div className="absolute bottom-3 left-3 right-3 bg-black/80 backdrop-blur-md p-2.5 rounded-xl border border-white/15 flex items-center justify-around text-xs text-white z-20">
                   <div className="flex items-center gap-1">
                     <TrendingUp className="w-3.5 h-3.5 text-[#B600A8]" />
                     <span className="font-bold">{post.views}</span>

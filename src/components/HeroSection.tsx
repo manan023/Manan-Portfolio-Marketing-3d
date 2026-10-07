@@ -41,12 +41,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               About
             </button>
 
+            {/* Price option commented out per request */}
+            {/*
             <button
               onClick={onOpenPricing}
               className="text-[#D7E2EA] dark:text-[#D7E2EA] light-text-adaptive font-medium uppercase tracking-wider text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer"
             >
               Price
             </button>
+            */}
 
             <button
               onClick={() => scrollTo('projects')}

@@ -15,6 +15,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import FadeIn from './common/FadeIn';
+import { SocialPostMediaVisual } from './social/SocialPostMediaVisual';
 
 export interface SocialPost {
   id: string;
@@ -65,7 +66,8 @@ export const TOP_SOCIAL_POSTS: SocialPost[] = [
     likes: '480K',
     shares: '68K',
     date: 'Top Trending',
-    mediaUrl: 'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
+    mediaUrl:
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85',
     tag: 'AI Engineering',
     link: 'https://instagram.com/instaresume.io',
     breakdown: [
@@ -85,7 +87,8 @@ export const TOP_SOCIAL_POSTS: SocialPost[] = [
     likes: '42K',
     shares: '6.2K',
     date: 'Case Study',
-    mediaUrl: 'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
+    mediaUrl:
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327.png&w=1280&q=85',
     tag: 'SEO & Marketing',
     link: 'https://www.linkedin.com',
     breakdown: [
@@ -126,7 +129,8 @@ export const TOP_SOCIAL_POSTS: SocialPost[] = [
     likes: '19.4K',
     shares: '4.8K',
     date: 'Viral Thread',
-    mediaUrl: 'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif',
+    mediaUrl:
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
     tag: 'Marketing Ops',
     link: 'https://x.com',
     breakdown: [
@@ -295,15 +299,10 @@ export const SocialHighlightsSection: React.FC<SocialHighlightsSectionProps> = (
             >
               {/* Card Media Preview Header */}
               <div className="relative aspect-[16/10] overflow-hidden bg-black/60">
-                <img
-                  src={post.mediaUrl}
-                  alt={post.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+                <SocialPostMediaVisual post={post} />
 
                 {/* Platform Badge & Tag */}
-                <div className="absolute top-3 left-3 flex items-center gap-2">
+                <div className="absolute top-3 left-3 flex items-center gap-2 z-20">
                   <div className="p-1.5 rounded-full bg-black/70 backdrop-blur-md text-white border border-white/10">
                     {post.platform === 'instagram' && <Instagram className="w-3.5 h-3.5 text-pink-400" />}
                     {post.platform === 'linkedin' && <Linkedin className="w-3.5 h-3.5 text-sky-400" />}
@@ -315,14 +314,14 @@ export const SocialHighlightsSection: React.FC<SocialHighlightsSectionProps> = (
                 </div>
 
                 {/* Play button overlay */}
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-[#B600A8] transition-all shadow-lg">
-                    <Play className="w-5 h-5 ml-0.5 fill-current" />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-colors flex items-center justify-center z-20 pointer-events-none">
+                  <div className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-[#B600A8] transition-all shadow-lg">
+                    <Play className="w-4 h-4 ml-0.5 fill-current" />
                   </div>
                 </div>
 
                 {/* Big Metric Badge */}
-                <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/15 text-white text-xs font-bold flex items-center gap-1.5">
+                <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/15 text-white text-xs font-bold flex items-center gap-1.5 z-20">
                   <TrendingUp className="w-3.5 h-3.5 text-[#B600A8]" />
                   <span>{post.views} views</span>
                 </div>

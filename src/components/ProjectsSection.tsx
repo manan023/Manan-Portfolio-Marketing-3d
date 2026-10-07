@@ -7,6 +7,14 @@ import {
   GscCountriesCard,
   GscSearchPerformanceCard,
 } from './projects/GscScreenshots';
+import {
+  ViralReelsMetricsCard,
+  InstagramAccountsReachedCard,
+  ViralReelsEngineCard,
+  LinkedInExtensionCard,
+  OpenAiPromptOptimizationCard,
+  SanityProgrammaticSeoCard,
+} from './projects/ProjectCardsScreenshots';
 
 export interface ProjectData {
   id: string;
@@ -185,13 +193,17 @@ const ProjectCard: React.FC<CardProps> = ({ project, index, totalCards, onSelect
           >
             {/* Left Column (40% width -> 5 cols out of 12) */}
             <div className="md:col-span-5 flex flex-col gap-4 sm:gap-6">
-              {/* Left Top Image / GA4 Dashboard */}
+              {/* Left Top Image / Primary Card */}
               <div
                 className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-lg"
                 style={{ height: 'clamp(140px, 17vw, 240px)' }}
               >
                 {project.id === 'instaresume-platform' ? (
                   <Ga4ActiveUsersCard />
+                ) : project.id === 'viral-reel-engine' ? (
+                  <ViralReelsMetricsCard />
+                ) : project.id === 'linkedin-chrome-extension' ? (
+                  <LinkedInExtensionCard />
                 ) : (
                   <>
                     <img
@@ -206,13 +218,17 @@ const ProjectCard: React.FC<CardProps> = ({ project, index, totalCards, onSelect
                 )}
               </div>
 
-              {/* Left Bottom Image / GSC Countries Breakdown */}
+              {/* Left Bottom Image / Secondary Card */}
               <div
                 className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-lg"
                 style={{ height: 'clamp(170px, 23vw, 350px)' }}
               >
                 {project.id === 'instaresume-platform' ? (
                   <GscCountriesCard />
+                ) : project.id === 'viral-reel-engine' ? (
+                  <InstagramAccountsReachedCard />
+                ) : project.id === 'linkedin-chrome-extension' ? (
+                  <OpenAiPromptOptimizationCard />
                 ) : (
                   <>
                     <img
@@ -228,7 +244,7 @@ const ProjectCard: React.FC<CardProps> = ({ project, index, totalCards, onSelect
               </div>
             </div>
 
-            {/* Right Column (60% width -> 7 cols out of 12) - GSC Search Results Performance */}
+            {/* Right Column (60% width -> 7 cols out of 12) - Feature Studio Dashboard */}
             <div className="md:col-span-7">
               <div
                 className="w-full h-full min-h-[320px] sm:min-h-[420px] md:min-h-[auto] rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] border border-white/10 group relative shadow-xl"
@@ -236,6 +252,10 @@ const ProjectCard: React.FC<CardProps> = ({ project, index, totalCards, onSelect
               >
                 {project.id === 'instaresume-platform' ? (
                   <GscSearchPerformanceCard />
+                ) : project.id === 'viral-reel-engine' ? (
+                  <ViralReelsEngineCard />
+                ) : project.id === 'linkedin-chrome-extension' ? (
+                  <SanityProgrammaticSeoCard />
                 ) : (
                   <>
                     <img

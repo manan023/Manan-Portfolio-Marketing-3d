@@ -10,6 +10,16 @@ import {
   InstagramMilestone23KCard,
   InstagramMilestone8KCard,
 } from './marquee/RealWorkCards';
+import {
+  InstaresumeBuilderPreviewCard,
+  LinkedInExtensionCardRow2,
+  SanitySeoEngineCardRow2,
+  OpenAiPromptOptimizationCardRow2,
+  TrelloContentSprintCardRow2,
+  InstaresumeCoverLetterCardRow2,
+  InstagramDemographicsCardRow2,
+  GscTopQueriesRankCardRow2,
+} from './marquee/RealWorkCardsRow2';
 
 // 8 Interleaved authentic work cards for maximum visual variety
 const ROW1_ITEMS = [
@@ -23,22 +33,21 @@ const ROW1_ITEMS = [
   { id: 'ig-8k', component: <InstagramMilestone8KCard /> },
 ];
 
-const ROW2_IMAGES = [
-  'https://motionsites.ai/assets/hero-stellar-ai-preview-D3HL6bw1.gif',
-  'https://motionsites.ai/assets/hero-xportfolio-preview-D4A8maiC.gif',
-  'https://motionsites.ai/assets/hero-orbit-web3-preview-BXt4OttD.gif',
-  'https://motionsites.ai/assets/hero-nexora-preview-cx5HmUgo.gif',
-  'https://motionsites.ai/assets/hero-evr-ventures-preview-DZxeVFEX.gif',
-  'https://motionsites.ai/assets/hero-planet-orbit-preview-DWAP8Z1P.gif',
-  'https://motionsites.ai/assets/hero-new-era-preview-CocuDUm9.gif',
-  'https://motionsites.ai/assets/hero-wealth-preview-B70idl_u.gif',
-  'https://motionsites.ai/assets/hero-luminex-preview-CxOP7ce6.gif',
-  'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif',
+// Row 2: 8 Authentic Engineering & Growth Cards (Instaresume, Chrome Extension, SEO, OpenAI API)
+const ROW2_ITEMS = [
+  { id: 'builder-core', component: <InstaresumeBuilderPreviewCard /> },
+  { id: 'linkedin-ext', component: <LinkedInExtensionCardRow2 /> },
+  { id: 'sanity-seo', component: <SanitySeoEngineCardRow2 /> },
+  { id: 'openai-cost', component: <OpenAiPromptOptimizationCardRow2 /> },
+  { id: 'trello-sprint', component: <TrelloContentSprintCardRow2 /> },
+  { id: 'cover-letter', component: <InstaresumeCoverLetterCardRow2 /> },
+  { id: 'ig-demographics', component: <InstagramDemographicsCardRow2 /> },
+  { id: 'gsc-queries', component: <GscTopQueriesRankCardRow2 /> },
 ];
 
 // Quadrupled lists for unbroken continuous scrolling
 const QUAD_ROW1 = [...ROW1_ITEMS, ...ROW1_ITEMS, ...ROW1_ITEMS, ...ROW1_ITEMS];
-const QUAD_ROW2 = [...ROW2_IMAGES, ...ROW2_IMAGES, ...ROW2_IMAGES, ...ROW2_IMAGES];
+const QUAD_ROW2 = [...ROW2_ITEMS, ...ROW2_ITEMS, ...ROW2_ITEMS, ...ROW2_ITEMS];
 
 export const MarqueeSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -99,7 +108,7 @@ export const MarqueeSection: React.FC = () => {
   const currentX1 = ((displayOffset + scrollSpeed + manualOffset) % singleCycleWidth + singleCycleWidth) % singleCycleWidth;
   const row1Transform = `translate3d(-${currentX1}px, 0, 0)`;
 
-  const singleCycleWidth2 = ROW2_IMAGES.length * 396;
+  const singleCycleWidth2 = ROW2_ITEMS.length * 396;
   const currentX2 = ((displayOffset * 0.85 - scrollSpeed - manualOffset) % singleCycleWidth2 + singleCycleWidth2) % singleCycleWidth2;
   const row2Transform = `translate3d(-${singleCycleWidth2 - currentX2}px, 0, 0)`;
 
@@ -120,7 +129,7 @@ export const MarqueeSection: React.FC = () => {
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-semibold uppercase tracking-wider text-white">
-            Row 1: Verified Telemetry & Instagram Growth (8 Live Case Studies)
+            Verified Work Telemetry, Platform Engineering & Growth (16 Live Case Studies)
           </span>
         </div>
 
@@ -170,7 +179,7 @@ export const MarqueeSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Row 2 - moves in opposite direction */}
+        {/* Row 2 - moves in opposite direction across relevant project works */}
         <div
           className="flex gap-4"
           style={{
@@ -179,18 +188,12 @@ export const MarqueeSection: React.FC = () => {
             transition: 'transform 0.05s linear',
           }}
         >
-          {QUAD_ROW2.map((src, index) => (
+          {QUAD_ROW2.map((item, index) => (
             <div
               key={`row2-${index}`}
-              className="w-[380px] h-[260px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-[#222]/40 shadow-xl"
+              className="w-[380px] h-[260px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
             >
-              <img
-                src={src}
-                alt={`Product Preview ${index + 1}`}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover rounded-2xl transition-transform duration-500 hover:scale-105"
-              />
+              {item.component}
             </div>
           ))}
         </div>

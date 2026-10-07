@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Sparkles, Layers, ArrowLeft, ArrowRight, Eye } from 'lucide-react';
 import { ProjectData } from './ProjectsSection';
@@ -7,6 +7,14 @@ import {
   GscCountriesCard,
   GscSearchPerformanceCard,
 } from './projects/GscScreenshots';
+import {
+  ViralReelsMetricsCard,
+  InstagramAccountsReachedCard,
+  ViralReelsEngineCard,
+  LinkedInExtensionCard,
+  OpenAiPromptOptimizationCard,
+  SanityProgrammaticSeoCard,
+} from './projects/ProjectCardsScreenshots';
 
 interface ProjectDetailModalProps {
   project: ProjectData | null;
@@ -26,6 +34,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   const [activeImageTab, setActiveImageTab] = useState<number>(0);
   const [wireframeMode, setWireframeMode] = useState<boolean>(false);
 
+  useEffect(() => {
+    setActiveImageTab(0);
+  }, [project?.id]);
+
   if (!project) return null;
 
   const currentIndex = allProjects.findIndex((p) => p.id === project.id);
@@ -37,21 +49,60 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
       ? [
           {
             title: 'Google Search Console: Query "biodata format" (3.49K Clicks, 297K Impressions, 1.5 Position)',
+            category: 'GSC Keyword Rank',
             url: project.col2Image,
           },
           {
             title: 'Google Search Console: Global Reach (India 1.75M, USA 725K, Philippines 534K Imp)',
+            category: 'Global Search Reach',
             url: project.col1Image2,
           },
           {
             title: 'Google Analytics 4: 128K Active Users & Outperforming Peer Median in Resumes',
+            category: 'GA4 Active Users',
             url: project.col1Image1,
           },
         ]
+      : project.id === 'viral-reel-engine'
+      ? [
+          {
+            title: 'Peak Viral Reel Breakdown (8.2M Views, 624K Likes, 94K Shares, 142% Retention)',
+            category: 'Peak Viral Reel #1',
+            url: project.col1Image1,
+          },
+          {
+            title: 'Instagram 30-Day Velocity (8.5M Organic Accounts Reached, 8K → 70.4K → 90K+ Followers)',
+            category: 'Audience Reach',
+            url: project.col1Image2,
+          },
+          {
+            title: 'Short-Form Content Production Studio (3-Step Viral Formula, Trello Sprints, 50+ Reels)',
+            category: 'Production Engine',
+            url: project.col2Image,
+          },
+        ]
+      : project.id === 'linkedin-chrome-extension'
+      ? [
+          {
+            title: 'LinkedIn Optimization Chrome Extension (Chrome Web Store, 92/100 ATS Profile Score)',
+            category: 'Chrome Extension',
+            url: project.col1Image1,
+          },
+          {
+            title: 'OpenAI Prompt Pipeline & Token Caching (-40% Cost Cut, 78.4% Cache Hits, $18.4K Saved)',
+            category: 'AI Pipeline Caching',
+            url: project.col1Image2,
+          },
+          {
+            title: 'Sanity Headless CMS & Programmatic SEO Architecture (Next.js 15 ISR, 80+ Keywords, 400K Surge)',
+            category: 'Programmatic SEO',
+            url: project.col2Image,
+          },
+        ]
       : [
-          { title: 'Hero Cinematic Render', url: project.col2Image },
-          { title: 'Surface Detail & Lighting Angle', url: project.col1Image1 },
-          { title: 'Material Breakdown & Composition', url: project.col1Image2 },
+          { title: 'Project Overview & Telemetry', category: 'Case Study', url: project.col2Image },
+          { title: 'Technical Architecture & Pipeline', category: 'Engineering', url: project.col1Image1 },
+          { title: 'Audited Results & Performance', category: 'Metrics', url: project.col1Image2 },
         ];
 
   return (
@@ -124,24 +175,27 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                   {activeImageTab === 1 && <GscCountriesCard />}
                   {activeImageTab === 2 && <Ga4ActiveUsersCard />}
                 </div>
+              ) : project.id === 'viral-reel-engine' ? (
+                <div className="w-full h-full min-h-[360px] sm:min-h-[420px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+                  {activeImageTab === 0 && <ViralReelsMetricsCard />}
+                  {activeImageTab === 1 && <InstagramAccountsReachedCard />}
+                  {activeImageTab === 2 && <ViralReelsEngineCard />}
+                </div>
+              ) : project.id === 'linkedin-chrome-extension' ? (
+                <div className="w-full h-full min-h-[360px] sm:min-h-[420px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+                  {activeImageTab === 0 && <LinkedInExtensionCard />}
+                  {activeImageTab === 1 && <OpenAiPromptOptimizationCard />}
+                  {activeImageTab === 2 && <SanityProgrammaticSeoCard />}
+                </div>
               ) : (
-                <>
-                  <img
-                    src={galleryImages[activeImageTab].url}
-                    alt={galleryImages[activeImageTab].title}
-                    className={`w-full h-full object-cover rounded-2xl transition-all duration-700 ${
-                      wireframeMode ? 'filter grayscale contrast-150 invert' : ''
-                    }`}
-                  />
-                  <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs text-white/90 border border-white/10">
-                    {galleryImages[activeImageTab].title}
-                  </div>
-                </>
+                <div className="w-full h-full min-h-[360px] flex items-center justify-center text-white/60">
+                  {galleryImages[activeImageTab]?.title}
+                </div>
               )}
             </div>
 
             {/* Gallery Selector Tabs */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {galleryImages.map((img, idx) => (
                 <button
                   key={idx}
@@ -153,7 +207,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                   }`}
                 >
                   <span className="text-[10px] uppercase font-bold tracking-wider text-[#B600A8] block mb-1">
-                    Telemetry #{idx + 1}
+                    {img.category || `Telemetry #${idx + 1}`}
                   </span>
                   <span className="text-xs font-medium line-clamp-2 leading-snug">
                     {img.title}
